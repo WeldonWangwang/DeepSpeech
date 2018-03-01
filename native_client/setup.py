@@ -32,28 +32,22 @@ class BuildExtFirst(build):
                     ('build_clib', build.has_c_libraries),
                     ('build_scripts', build.has_scripts)]
 
-model = Extension('deepspeech._model',
-        ['python/model.i'],
+model = Extension('_deepspeech',
+        ['python/deepspeech.i'],
         include_dirs = [numpy_include],
         library_dirs = list(map(lambda x: x.strip(), os.getenv('MODEL_LDFLAGS', '').split('-L')[1:])),
         libraries = list(map(lambda x: x.strip(), os.getenv('MODEL_LIBS', '').split('-l')[1:])))
-
-utils = Extension('deepspeech._utils',
-        ['python/utils.i'],
-        include_dirs = [numpy_include],
-        library_dirs = list(map(lambda x: x.strip(), os.getenv('UTILS_LDFLAGS', '').split('-L')[1:])),
-        libraries = ['deepspeech_utils'])
 
 setup(name = project_name,
       description = 'A library for running inference on a DeepSpeech model',
       author = 'Mozilla',
       version = '0.1.1',
-      package_dir = {'deepspeech': 'python'},
-      packages = ['deepspeech'],
+      package_dir = {'': 'python'},
       cmdclass = {'build': BuildExtFirst},
       license = 'MPL-2.0',
       url = 'https://github.com/mozilla/DeepSpeech',
-      ext_modules = [model, utils],
+      ext_modules = [model],
+      py_modules = ['deepspeech'],
       entry_points={'console_scripts':['deepspeech = deepspeech.client:main']},
       install_requires = ['numpy', 'scipy'],
       include_package_data = True,
